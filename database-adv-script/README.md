@@ -211,6 +211,16 @@ RANK() assigns a rank to each row within the result set. If two or more properti
 OVER (ORDER BY COUNT(b.booking_id) DESC) specifies that the ranking should be based on the total_bookings_received in descending order (highest bookings get rank 1).
 
 The outer ORDER BY ensures the final result set is presented clearly, ordered by rank, then by booking count, and finally by property name for ties.
+
+
+alx-airbnb-database/
+└── database-adv-script/
+    ├── perfomance.sql
+    └── optimization_report.md
+git add perfomance.sql optimization_report.md
+git commit -m "Add complex query optimization with EXPLAIN ANALYZE"
+git push
+
  6. Contact Information
 
 For any questions or collaborations, feel free to reach out:
