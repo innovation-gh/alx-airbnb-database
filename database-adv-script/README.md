@@ -187,6 +187,30 @@ It returns a single count for each user.
 
 WHERE (...) > 3: The outer query then filters the users, keeping only those for whom the count of bookings returned by the subquery is greater than 3.
 
+
+Explanation of the Queries:
+
+Total Bookings by Each User (Aggregation):
+
+We JOIN the users table with the bookings table on user_id to link users to their bookings.
+
+COUNT(b.booking_id) counts the number of bookings.
+
+GROUP BY u.id, u.username ensures that the COUNT is performed for each unique user. Including username in GROUP BY is good practice when selecting it, even if id is unique.
+
+ORDER BY total_bookings_made DESC sorts the results to show users with the most bookings first.
+
+Rank Properties by Total Bookings (Window Function):
+
+First, we perform an implicit aggregation by JOINing properties and bookings and then GROUP BY p.id, p.property_name. This gives us COUNT(b.booking_id) which represents the total_bookings_received for each property.
+
+RANK() OVER (ORDER BY COUNT(b.booking_id) DESC) is the window function:
+
+RANK() assigns a rank to each row within the result set. If two or more properties have the same total_bookings_received, they will receive the same rank, and the next rank will skip numbers (e.g., 1, 1, 3).
+
+OVER (ORDER BY COUNT(b.booking_id) DESC) specifies that the ranking should be based on the total_bookings_received in descending order (highest bookings get rank 1).
+
+The outer ORDER BY ensures the final result set is presented clearly, ordered by rank, then by booking count, and finally by property name for ties.
  6. Contact Information
 
 For any questions or collaborations, feel free to reach out:
