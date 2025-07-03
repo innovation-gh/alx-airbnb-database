@@ -20,13 +20,36 @@ ORDER BY
     total_bookings_made DESC, u.username ASC;
 
 
--- Instruction 2:
--- Use a window function (ROW_NUMBER) to rank properties based on the total number of bookings they have received.
+-- Instruction 2 (a):
+-- Use the ROW_NUMBER window function to rank properties based on the total number of bookings.
 SELECT
     property_id,
     property_name,
     total_bookings_received,
-    ROW_NUMBER() OVER (ORDER BY total_bookings_received DESC) AS booking_rank
+    ROW_NUMBER() OVER (ORDER BY total_bookings_received DESC) AS row_number_rank
+FROM (
+    SELECT
+        p.id AS property_id,
+        p.property_name,
+        COUNT(b.booking_id) AS total_bookings_received
+    FROM
+        properties AS p
+    JOIN
+        bookings AS b ON p.id = b.property_id
+    GROUP BY
+        p.id, p.property_name
+) AS row_ranked_properties
+ORDER BY
+    row_number_rank ASC, total_bookings_received DESC, property_name ASC;
+
+
+-- Instruction 2 (b):
+-- Use the RANK window function to rank properties based on the total number of bookings.
+SELECT
+    property_id,
+    property_name,
+    total_bookings_received,
+    RANK() OVER (ORDER BY total_bookings_received DESC) AS booking_rank
 FROM (
     SELECT
         p.id AS property_id,
