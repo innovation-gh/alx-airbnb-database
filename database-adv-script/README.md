@@ -221,6 +221,116 @@ git add perfomance.sql optimization_report.md
 git commit -m "Add complex query optimization with EXPLAIN ANALYZE"
 git push
 
+
+Initial Analysis
+EXPLAIN Plan Summary:
+[Paste here the key points of the EXPLAIN plan, e.g., table scans, join types, indexes used]
+
+Profiling Results (Before Optimization):
+Execution time: XX ms
+CPU usage: XX%
+Other relevant metrics...
+
+Identified Bottlenecks
+No index on bookings.user_id causing full table scan
+
+Join on payments.payment_id inefficient due to missing index
+
+etc.
+
+Optimization Suggestions
+Add index on bookings.user_id
+
+Add index on payments.payment_id
+
+Consider partitioning bookings by start_date if large
+
+Implementation
+sql
+Copy
+Edit
+CREATE INDEX idx_booking_user_id ON bookings(user_id);
+CREATE INDEX idx_payment_payment_id ON payments(payment_id);
+Post-Optimization Results
+EXPLAIN Plan Summary:
+[Updated explain output showing index usage, faster join]
+
+Profiling Results (After Optimization):
+Execution time reduced to XX ms (YY% improvement)
+CPU usage reduced
+Other metrics...
+
+Query 2: Properties with High Ratings
+Query Text
+sql
+Copy
+Edit
+SELECT
+    p.id AS property_id,
+    p.property_name
+FROM
+    properties AS p
+WHERE
+    p.id IN (
+        SELECT
+            r.property_id
+        FROM
+            reviews AS r
+        GROUP BY
+            r.property_id
+        HAVING
+            AVG(r.rating) > 4.0
+    );
+Initial Analysis
+EXPLAIN Plan Summary:
+[Explain details here]
+
+Profiling Results (Before Optimization):
+Execution time: XX ms
+Other relevant metrics...
+
+Identified Bottlenecks
+Subquery in WHERE IN causing multiple scans on reviews
+
+Missing index on reviews.property_id
+
+Optimization Suggestions
+Add index on reviews.property_id
+
+Rewrite query using JOIN instead of IN
+
+Implementation
+sql
+Copy
+Edit
+CREATE INDEX idx_reviews_property_id ON reviews(property_id);
+Alternative query rewrite:
+
+sql
+Copy
+Edit
+SELECT DISTINCT p.id, p.property_name
+FROM properties p
+JOIN reviews r ON p.id = r.property_id
+GROUP BY p.id, p.property_name
+HAVING AVG(r.rating) > 4.0;
+Post-Optimization Results
+EXPLAIN Plan Summary:
+[Updated plan showing better index usage]
+
+Profiling Results (After Optimization):
+Execution time reduced to XX ms
+Other metrics...
+
+Summary and Recommendations
+Indexes added improved query performance by approximately XX% across tested queries.
+
+Avoid subqueries in WHERE IN clauses when possible; JOINs tend to perform better.
+
+Consider partitioning very large tables by date or other logical keys.
+
+Establish a regular query profiling and indexing review process to maintain optimal performance.
+
  6. Contact Information
 
 For any questions or collaborations, feel free to reach out:
