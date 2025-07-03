@@ -1,6 +1,7 @@
 -- File: perfomance.sql
 
--- Step 1: Initial Complex Query
+-- Step 1: Initial Complex Query with WHERE and AND
+-- Simulating a real use case: Get all confirmed bookings from 2024 onward
 EXPLAIN ANALYZE
 SELECT
     b.booking_id,
@@ -23,12 +24,13 @@ JOIN
 JOIN
     properties AS p ON b.property_id = p.id
 JOIN
-    payments AS pay ON b.booking_id = pay.booking_id;
+    payments AS pay ON b.booking_id = pay.booking_id
+WHERE
+    pay.status = 'confirmed'
+    AND b.start_date >= '2024-01-01';
 
 -- Step 2: Optimized Query
--- Optimization: Removed unnecessary columns, ensured only indexed fields are used in joins,
--- and ensured indexes on booking_id, user_id, property_id, payments.booking_id
-
+-- Only fetches necessary columns with same filters
 EXPLAIN ANALYZE
 SELECT
     b.booking_id,
@@ -43,4 +45,7 @@ JOIN
 JOIN
     properties AS p ON b.property_id = p.id
 JOIN
-    payments AS pay ON b.booking_id = pay.booking_id;
+    payments AS pay ON b.booking_id = pay.booking_id
+WHERE
+    pay.status = 'confirmed'
+    AND b.start_date >= '2024-01-01';
